@@ -35,7 +35,7 @@ impl<'rt> OwnedJsiHostObject<'rt> {
         )
     }
 
-    pub fn properties(&mut self, rt: &mut RuntimeHandle<'rt>) -> Vec<PropName> {
+    pub fn properties(&mut self, rt: &mut RuntimeHandle<'rt>) -> Vec<PropName<'rt>> {
         let mut props = sys::HostObject_getPropertyNames(self.0.pin_mut(), rt.get_inner_mut());
         let mut vec = Vec::with_capacity(props.len());
         loop {

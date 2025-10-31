@@ -29,8 +29,8 @@ pub(crate) mod ffi {
             ptr: SharedPtr<HostObject>,
         ) -> SharedPtr<CxxHostObject>;
 
-        pub fn CxxHostObject_getInner(ptr: &CxxHostObject) -> &RustHostObject;
-        pub fn CxxHostObject_getInnerMut(ptr: Pin<&mut CxxHostObject>) -> &mut RustHostObject;
+        pub fn CxxHostObject_getInner(ptr: &CxxHostObject) -> &RustHostObject<'_>;
+        pub fn CxxHostObject_getInnerMut(ptr: Pin<&mut CxxHostObject>) -> &mut RustHostObject<'_>;
     }
 
     #[namespace = "jsi_rs::ffi"]

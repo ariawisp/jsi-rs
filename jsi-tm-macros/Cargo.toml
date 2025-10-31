@@ -1,0 +1,15 @@
+[package]
+name = "jsi-tm-macros"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Ergonomic macro helpers for building JSI values/objects in Rust TurboModules"
+authors = ["GPUI Team"]
+repository = "https://github.com/laptou/jsi-rs/"
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+# No direct dependency on `jsi` is required; macros expand to `::jsi::...` paths
+
