@@ -11,15 +11,24 @@ fn main() {
         None
     };
 
-    let rn_base = pkg_base.join("vendor/react-native/packages/react-native");
+    // Support external React Native via JSI_RS_RN_ROOT env var
+    let rn_base = if let Some(rn_root) = env::var_os("JSI_RS_RN_ROOT") {
+        PathBuf::from(rn_root)
+    } else {
+        pkg_base.join("vendor/react-native/packages/react-native")
+    };
 
     let mut includes = vec![
-        rn_base.join("React"),
-        rn_base.join("React/Base"),
         rn_base.join("ReactCommon/jsi"),
         rn_base.join("ReactCommon/callinvoker"),
         pkg_base.join("include"),
     ];
+
+    // Desktop platforms (macOS/Linux/Windows) don't need React/Base
+    if let Some("android") | Some("ios") = target_os {
+        includes.push(rn_base.join("React"));
+        includes.push(rn_base.join("React/Base"));
+    }
 
     if let Some("android") = target_os {
         includes.push(
@@ -32,7 +41,13 @@ fn main() {
         .map(|p| dunce::canonicalize(&p).expect(&format!("missing include path {:?}", p)))
         .collect();
 
-    let mut compiles = vec![rn_base.join("ReactCommon/jsi/jsi/jsi.cpp")];
+    let mut compiles = vec![];
+
+    // Only compile jsi.cpp if the feature is enabled (default: disabled for external RN usage)
+    #[cfg(feature = "builtin-jsi")]
+    {
+        compiles.push(rn_base.join("ReactCommon/jsi/jsi/jsi.cpp"));
+    }
 
     if let Some("android") = target_os {
         compiles.push(
