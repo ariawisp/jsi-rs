@@ -71,6 +71,12 @@ impl<'rt> JsiObject<'rt> {
             .pin_mut()
             .instance_of(rt.get_inner_mut(), ctor.0.as_ref().unwrap())
     }
+
+    /// Consumes this JsiObject and returns the raw pointer to the underlying
+    /// facebook::jsi::Object. Ownership is transferred to the caller.
+    pub fn into_raw(self) -> *mut sys::JsiObject {
+        self.0.into_raw()
+    }
 }
 
 pub trait FromObject<'rt>: Sized {

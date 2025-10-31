@@ -44,8 +44,9 @@ fn main() {
     let mut compiles = vec![];
 
     // Only compile jsi.cpp if the feature is enabled (default: disabled for external RN usage)
-    #[cfg(feature = "builtin-jsi")]
-    {
+    // Note: build scripts do not receive cfg(feature = ...) directly; Cargo exposes
+    // enabled features as CARGO_FEATURE_<NAME> env vars.
+    if std::env::var_os("CARGO_FEATURE_BUILTIN_JSI").is_some() {
         compiles.push(rn_base.join("ReactCommon/jsi/jsi/jsi.cpp"));
     }
 
@@ -80,4 +81,5 @@ fn main() {
 
     println!("cargo:rerun-if-changed=include/wrapper.h");
     println!("cargo:rerun-if-changed=include/host.h");
+    println!("cargo:rerun-if-env-changed=JSI_RS_RN_ROOT");
 }
