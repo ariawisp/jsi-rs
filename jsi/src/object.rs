@@ -22,6 +22,11 @@ impl<'rt> JsiObject<'rt> {
         JsiObject(sys::Object_create(rt.get_inner_mut()), PhantomData)
     }
 
+    /// Consume the object and return it as a `cxx::UniquePtr`.
+    pub fn into_unique_ptr(self) -> cxx::UniquePtr<sys::JsiObject> {
+        unsafe { cxx::UniquePtr::from_raw(self.into_raw()) }
+    }
+
     pub fn get(&self, prop: PropName, rt: &mut RuntimeHandle<'rt>) -> JsiValue<'rt> {
         JsiValue(
             sys::Object_getProperty(

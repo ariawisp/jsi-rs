@@ -48,6 +48,14 @@ impl<'rt> RuntimeHandle<'rt> {
         self.display(it).to_string()
     }
 
+    /// Create a [`RuntimeHandle`] from a pinned runtime reference.
+    ///
+    /// # Safety
+    /// Caller must ensure the provided runtime pointer remains valid for `'rt`.
+    pub unsafe fn from_raw_pin(rt: Pin<&'rt mut sys::Runtime>) -> Self {
+        RuntimeHandle::new_unchecked(rt.get_unchecked_mut() as *mut sys::Runtime)
+    }
+
     /// Copies a borrowed `facebook::jsi::Object` into a [`JsiValue`].
     ///
     /// # Safety

@@ -12,9 +12,11 @@ mod array_buffer;
 mod call_invoker;
 #[cfg(feature = "serde")]
 mod convert;
+mod ext;
 mod function;
 mod host_function;
 mod host_object;
+mod noop;
 mod object;
 mod prop_name;
 mod runtime;
@@ -27,9 +29,11 @@ pub use array_buffer::*;
 pub use call_invoker::*;
 #[cfg(feature = "serde")]
 pub use convert::*;
+pub use ext::*;
 pub use function::*;
 pub use host_function::*;
 pub use host_object::*;
+pub use noop::*;
 pub use object::*;
 pub use prop_name::*;
 pub use runtime::*;

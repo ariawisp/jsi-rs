@@ -36,6 +36,11 @@ impl<'rt> JsiValue<'rt> {
         self.0
     }
 
+    /// Consume the value and return it as a `cxx::UniquePtr`.
+    pub fn into_unique_ptr(self) -> cxx::UniquePtr<sys::JsiValue> {
+        self.into_raw()
+    }
+
     pub fn new_undefined() -> Self {
         Self(sys::Value_fromUndefined(), PhantomData)
     }
