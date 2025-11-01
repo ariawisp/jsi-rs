@@ -18,6 +18,24 @@ pub struct JsiValue<'rt>(
 );
 
 impl<'rt> JsiValue<'rt> {
+    /// Wrap a UniquePtr<JsiValue> from the low-level API
+    ///
+    /// # Safety
+    /// Caller must ensure the UniquePtr is valid and not used elsewhere
+    pub unsafe fn from_raw(ptr: cxx::UniquePtr<sys::JsiValue>) -> Self {
+        Self(ptr, PhantomData)
+    }
+
+    /// Get a reference to the internal UniquePtr for low-level API calls
+    pub fn as_raw(&self) -> &sys::JsiValue {
+        self.0.as_ref().unwrap()
+    }
+
+    /// Get the internal UniquePtr, consuming self
+    pub fn into_raw(self) -> cxx::UniquePtr<sys::JsiValue> {
+        self.0
+    }
+
     pub fn new_undefined() -> Self {
         Self(sys::Value_fromUndefined(), PhantomData)
     }

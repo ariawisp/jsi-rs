@@ -10,6 +10,11 @@ pub struct PropName<'rt>(
 );
 
 impl<'rt> PropName<'rt> {
+    /// Get a reference to the internal UniquePtr for low-level API calls
+    pub fn as_raw(&self) -> &sys::PropNameID {
+        self.0.as_ref().unwrap()
+    }
+
     pub fn new(name: &str, rt: &mut RuntimeHandle<'rt>) -> Self {
         PropName(
             sys::PropNameID_forUtf8(rt.get_inner_mut(), name),

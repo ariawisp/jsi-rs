@@ -1,5 +1,6 @@
 use crate::object::JsiObject;
 use crate::sys;
+use crate::value::JsiValue;
 use std::cell::Cell;
 use std::marker::PhantomData;
 use std::pin::Pin;
@@ -46,6 +47,36 @@ impl<'rt> RuntimeHandle<'rt> {
     pub fn to_string<'a, T: RuntimeDisplay>(&'a mut self, it: &'a T) -> String {
         self.display(it).to_string()
     }
+
+    /// Copies a borrowed `facebook::jsi::Object` into a [`JsiValue`].
+    ///
+    /// # Safety
+    /// The provided object reference must originate from the same runtime and remain
+    /// valid for the duration of this call.
+    pub unsafe fn value_from_object_ref(&mut self, object: &sys::JsiObject) -> JsiValue<'rt> {
+        JsiValue(
+            sys::Value_copyFromObject(self.get_inner_mut(), object),
+            PhantomData,
+        )
+    }
+
+    /// Copies a borrowed `facebook::jsi::Array` into a [`JsiValue`].
+    ///
+    /// # Safety
+    /// The provided array reference must originate from the same runtime and remain
+    /// valid for the duration of this call.
+    pub unsafe fn value_from_array_ref(&mut self, array: &sys::JsiArray) -> JsiValue<'rt> {
+        self.value_from_object_ref(cast_array_to_object(array))
+    }
+
+    /// Copies a borrowed `facebook::jsi::Function` into a [`JsiValue`].
+    ///
+    /// # Safety
+    /// The provided function reference must originate from the same runtime and remain
+    /// valid for the duration of this call.
+    pub unsafe fn value_from_function_ref(&mut self, function: &sys::JsiFunction) -> JsiValue<'rt> {
+        self.value_from_object_ref(cast_function_to_object(function))
+    }
 }
 
 unsafe impl<'rt> Send for RuntimeHandle<'rt> {}
@@ -81,4 +112,12 @@ impl<'a, T: RuntimeDisplay> std::fmt::Display for RuntimeDisplayWrapper<'a, T> {
         self.0.replace(Some(s));
         r
     }
+}
+
+unsafe fn cast_array_to_object(array: &sys::JsiArray) -> &sys::JsiObject {
+    &*(array as *const sys::JsiArray as *const sys::JsiObject)
+}
+
+unsafe fn cast_function_to_object(function: &sys::JsiFunction) -> &sys::JsiObject {
+    &*(function as *const sys::JsiFunction as *const sys::JsiObject)
 }
