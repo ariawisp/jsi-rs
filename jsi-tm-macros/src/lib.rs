@@ -26,6 +26,35 @@
 //! }
 //! ```
 
+/// Create a JavaScript Promise using `jsi::create_promise`.
+///
+/// This macro is TurboModule-agnostic and simply wraps `jsi::create_promise`.
+/// It returns a `::jsi::JsiObject` representing the Promise. You can convert
+/// it to a value with `.into_value(rt)` or return it directly from functions
+/// that expect an object.
+///
+/// Variants:
+/// - `jsi_promise!(rt, |resolve, reject| { /* body */ })`
+/// - `jsi_promise!(rt, |resolve, reject, rt2| { /* body */ })`
+///
+/// Example:
+/// ```ignore
+/// let p = jsi_promise!(rt, |resolve, reject| {
+///     std::thread::spawn(move || {
+///         resolve.call(std::iter::empty(), /* ... */);
+///     });
+/// });
+/// ```
+#[macro_export]
+macro_rules! jsi_promise {
+    ($rt:expr, |$resolve:ident, $reject:ident| $body:block) => {{
+        ::jsi::create_promise(|$resolve, $reject, _rt| $body, $rt)
+    }};
+    ($rt:expr, |$resolve:ident, $reject:ident, $hrt:ident| $body:block) => {{
+        ::jsi::create_promise(|$resolve, $reject, $hrt| $body, $rt)
+    }};
+}
+
 /// Build a JavaScript Object using the high-level `jsi` APIs.
 ///
 /// - First argument is a mutable reference to a `RuntimeHandle` (e.g. `&mut rt`).

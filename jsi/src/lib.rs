@@ -9,6 +9,7 @@ extern crate self as jsi;
 
 mod array;
 mod array_buffer;
+mod macros_extras;
 mod call_invoker;
 #[cfg(feature = "serde")]
 mod convert;
@@ -26,6 +27,7 @@ mod value;
 
 pub use array::*;
 pub use array_buffer::*;
+pub use macros_extras::*;
 pub use call_invoker::*;
 #[cfg(feature = "serde")]
 pub use convert::*;

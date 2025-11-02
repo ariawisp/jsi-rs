@@ -214,6 +214,9 @@ impl<'rt> FromValue<'rt> for JsiObject<'rt> {
     }
 }
 
+// Note: `FromValue` for `JsiArray` is provided via the blanket
+// `impl<'rt, T: FromObject<'rt>> FromValue<'rt> for T` below.
+
 impl<'rt, T: FromObject<'rt>> FromValue<'rt> for T {
     fn from_value(value: &JsiValue<'rt>, rt: &mut RuntimeHandle<'rt>) -> Option<Self> {
         let obj: Option<JsiObject> = FromValue::from_value(value, rt);
