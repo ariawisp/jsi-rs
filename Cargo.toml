@@ -2,7 +2,6 @@
 members = [
   "jsi-sys",
   "jsi-macros",
-  "jsi-tm-macros",
   "jsi-tests",
   "jsi",
   "example/example-jsi-module"
