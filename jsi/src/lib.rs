@@ -9,6 +9,7 @@ extern crate self as jsi;
 
 mod array;
 mod array_buffer;
+mod array_buffer_ext;
 mod macros_extras;
 mod call_invoker;
 #[cfg(feature = "serde")]
@@ -31,6 +32,7 @@ mod typed_array;
 
 pub use array::*;
 pub use array_buffer::*;
+pub use array_buffer_ext::*;
 #[allow(unused_imports)]
 pub use macros_extras::*;
 pub use call_invoker::*;
@@ -43,6 +45,7 @@ pub use host_object::*;
 pub use noop::*;
 pub use object::*;
 pub use prop_name::*;
+pub mod cached_prop_name;
 pub use runtime::*;
 pub use string::*;
 pub use symbol::*;

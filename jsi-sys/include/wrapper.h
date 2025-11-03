@@ -16,6 +16,7 @@ namespace jsi_rs
 namespace ffi
 {
 using Buffer = ::facebook::jsi::Buffer;
+using MutableBuffer = ::facebook::jsi::MutableBuffer;
 using StringBuffer = ::facebook::jsi::StringBuffer;
 using PreparedJavaScript = ::facebook::jsi::PreparedJavaScript;
 using Symbol = ::facebook::jsi::Symbol;
@@ -298,6 +299,26 @@ std::unique_ptr<Array> Object_getPropertyNames(Object &self, Runtime &rt)
   return std::make_unique<Array>(std::move(val));
 }
 
+// Fast path by numeric index (treat object as Array)
+::std::unique_ptr<Value> Object_getPropertyByIndex(
+    const Object &self, Runtime &rt, size_t index)
+{
+  Array (::facebook::jsi::Object::*fp)(Runtime &) const & =
+      &::facebook::jsi::Object::asArray;
+  auto arr = (self.*fp)(rt);
+  auto value = arr.getValueAtIndex(rt, index);
+  return std::make_unique<Value>(std::move(value));
+}
+
+void Object_setPropertyByIndex(
+    Object &self, Runtime &rt, size_t index, const Value &value)
+{
+  Array (::facebook::jsi::Object::*fp)(Runtime &) const & =
+      &::facebook::jsi::Object::asArray;
+  auto arr = (self.*fp)(rt);
+  arr.setValueAtIndex(rt, index, value);
+}
+
 // WeakObject
 
 std::unique_ptr<WeakObject>
@@ -501,6 +522,38 @@ std::unique_ptr<Value> Value_copy(const Value &self, Runtime &rt)
 }
 
 // CallInvoker
+
+// External ArrayBuffer backed by host memory
+extern "C" void array_buffer_external_deleter_trampoline(void *closure) noexcept;
+
+class ExternalBuffer final : public MutableBuffer
+{
+public:
+  ExternalBuffer(uint8_t *data, size_t size, void *deleter)
+      : data_(data), size_(size), deleter_(deleter) {}
+  ~ExternalBuffer() override
+  {
+    if (deleter_ != nullptr)
+    {
+      array_buffer_external_deleter_trampoline(deleter_);
+    }
+  }
+  size_t size() const override { return size_; }
+  uint8_t *data() override { return data_; }
+
+private:
+  uint8_t *data_;
+  size_t size_;
+  void *deleter_;
+};
+
+::std::unique_ptr<ArrayBuffer> Runtime_createArrayBufferFromExternal(
+    Runtime &rt, void *data, size_t len, void *deleter)
+{
+  auto sp = std::make_shared<ExternalBuffer>(
+      reinterpret_cast<uint8_t *>(data), len, deleter);
+  return std::make_unique<ArrayBuffer>(ArrayBuffer(rt, std::move(sp)));
+}
 
 void call_invoker_trampoline(void *closure);
 

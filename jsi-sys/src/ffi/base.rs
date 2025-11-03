@@ -139,6 +139,12 @@ pub mod ffi {
             rt: Pin<&mut Runtime>,
             prop: &PropNameID,
         ) -> UniquePtr<JsiValue>;
+        #[namespace = "jsi_rs::ffi"]
+        pub fn Object_getPropertyByIndex(
+            _self: &JsiObject,
+            rt: Pin<&mut Runtime>,
+            index: usize,
+        ) -> UniquePtr<JsiValue>;
         #[cxx_name = "hasProperty"]
         pub fn has_property(self: &JsiObject, rt: Pin<&mut Runtime>, prop: &PropNameID) -> bool;
         #[namespace = "jsi_rs::ffi"]
@@ -146,6 +152,13 @@ pub mod ffi {
             _self: Pin<&mut JsiObject>,
             rt: Pin<&mut Runtime>,
             prop: &PropNameID,
+            value: &JsiValue,
+        );
+        #[namespace = "jsi_rs::ffi"]
+        pub fn Object_setPropertyByIndex(
+            _self: Pin<&mut JsiObject>,
+            rt: Pin<&mut Runtime>,
+            index: usize,
             value: &JsiValue,
         );
         #[cxx_name = "isArray"]
@@ -220,6 +233,13 @@ pub mod ffi {
         pub type JsiArrayBuffer;
         pub unsafe fn data(self: &JsiArrayBuffer, rt: Pin<&mut Runtime>) -> *mut u8;
         pub fn length(self: &JsiArrayBuffer, rt: Pin<&mut Runtime>) -> usize;
+        #[namespace = "jsi_rs::ffi"]
+        pub unsafe fn Runtime_createArrayBufferFromExternal(
+            rt: Pin<&mut Runtime>,
+            data: *mut c_void,
+            len: usize,
+            deleter: *mut c_void,
+        ) -> UniquePtr<JsiArrayBuffer>;
 
         #[cxx_name = "Function"]
         pub type JsiFunction;
@@ -365,6 +385,8 @@ pub mod ffi {
         ) -> Result<UniquePtr<JsiValue>>;
 
         unsafe fn call_invoker_trampoline(closure: *mut c_void) -> Result<()>;
+
+        unsafe fn array_buffer_external_deleter_trampoline(closure: *mut c_void);
     }
 }
 
@@ -413,5 +435,12 @@ pub type CallInvokerCallback<'rt> = Box<dyn FnOnce() -> anyhow::Result<()> + 'rt
 
 unsafe fn call_invoker_trampoline(closure: *mut c_void) -> anyhow::Result<()> {
     let closure = Box::from_raw(closure as *mut CallInvokerCallback);
+    closure()
+}
+
+pub type ExternalBufferDeleter<'rt> = Box<dyn FnOnce() + 'rt>;
+
+unsafe fn array_buffer_external_deleter_trampoline(closure: *mut c_void) {
+    let closure = Box::from_raw(closure as *mut ExternalBufferDeleter);
     closure()
 }

@@ -122,6 +122,35 @@ impl<'rt> JsiObject<'rt> {
             sys::Object_setNativeState(self.0.pin_mut(), rt.get_inner_mut(), wrapper);
         }
     }
+
+    #[inline(always)]
+    pub fn get_property_by_index(
+        &self,
+        index: usize,
+        rt: &mut RuntimeHandle<'rt>,
+    ) -> JsiValue<'rt> {
+        let value_ptr = sys::Object_getPropertyByIndex(
+            self.0.as_ref().unwrap(),
+            rt.get_inner_mut(),
+            index,
+        );
+        JsiValue(value_ptr, PhantomData)
+    }
+
+    #[inline(always)]
+    pub fn set_property_by_index(
+        &mut self,
+        index: usize,
+        value: &JsiValue<'rt>,
+        rt: &mut RuntimeHandle<'rt>,
+    ) {
+        sys::Object_setPropertyByIndex(
+            self.0.pin_mut(),
+            rt.get_inner_mut(),
+            index,
+            value.0.as_ref().unwrap(),
+        );
+    }
 }
 
 pub trait FromObject<'rt>: Sized {
