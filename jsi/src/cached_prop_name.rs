@@ -22,6 +22,10 @@ pub fn get_cached_prop_name<'rt>(name: &'static str, rt: &mut RuntimeHandle<'rt>
     })
 }
 
+pub fn clear_cache() {
+    PROP_NAME_CACHE.with(|tl| tl.borrow_mut().clear());
+}
+
 #[macro_export]
 macro_rules! prop {
     ($name:literal, $rt:expr) => {

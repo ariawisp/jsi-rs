@@ -8,7 +8,7 @@ publish = false
 [dependencies]
 cxx = "1.0"
 anyhow = "1.0"
-jsi-sys = { path = "../jsi-sys" }
+jsi-sys = { path = "../jsi-sys", features = ["builtin-jsi"] }
 jsi = { path = "../jsi" }
 
 [build-dependencies]

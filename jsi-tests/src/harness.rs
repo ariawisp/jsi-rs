@@ -18,7 +18,9 @@ impl Harness {
     pub fn run<R>(&mut self, f: impl for<'rt> FnOnce(&'rt mut RuntimeHandle<'rt>) -> R) -> R {
         // Safety: the Hermes runtime lives for the duration of self.raw.
         let mut handle = unsafe { RuntimeHandle::from_raw_pin(self.raw.pin_mut()) };
-        f(&mut handle)
+        let out = f(&mut handle);
+        // Clear any cached PropNameIDs that would dangle after the runtime drops.
+        jsi::cached_prop_name::clear_cache();
+        out
     }
 }
-

@@ -59,17 +59,11 @@ fn main() {
         .files(compiles)
         .compile("js-tests");
 
-    println!("cargo:rustc-link-lib=hermes");
-    println!(
-        "cargo:rustc-link-search={}",
-        pkg_base
-            .join("../vendor/hermes/build/API/hermes/")
-            .to_string_lossy()
-    );
-    println!(
-        "cargo:rustc-env=LD_LIBRARY_PATH={}",
-        pkg_base
-            .join("../vendor/hermes/build/API/hermes/")
-            .to_string_lossy()
-    );
+    // Hermes builds a lean runtime by default; link that variant.
+    println!("cargo:rustc-link-lib=hermes_lean");
+    let hermes_dir = pkg_base.join("../vendor/hermes/build/API/hermes/");
+    println!("cargo:rustc-link-search={}", hermes_dir.to_string_lossy());
+    // Embed rpath so the test binary can find the dylib at runtime on macOS.
+    #[cfg(target_os = "macos")]
+    println!("cargo:rustc-link-arg=-Wl,-rpath,{}", hermes_dir.to_string_lossy());
 }
