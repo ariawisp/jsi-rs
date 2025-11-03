@@ -19,9 +19,7 @@ impl<T: HybridObject + 'static> HybridObjectExt for T {
         // Attach native state as Arc<Self> so methods can recover it from `this`.
         let boxed = sys::RustNativeState::from_arc(self.clone());
         let wrapper = sys::create_native_state_wrapper(boxed);
-        unsafe {
-            sys::Object_setNativeState(obj.0.pin_mut(), rt.get_inner_mut(), wrapper);
-        }
+        sys::Object_setNativeState(obj.0.pin_mut(), rt.get_inner_mut(), wrapper);
 
         self.load_methods(&mut obj, rt);
         obj

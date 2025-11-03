@@ -85,7 +85,7 @@ impl<'rt> JsiObject<'rt> {
     }
 
     pub fn has_native_state(&self, rt: &mut RuntimeHandle<'rt>) -> bool {
-        unsafe { sys::Object_hasNativeState(self.0.as_ref().unwrap(), rt.get_inner_mut()) }
+        sys::Object_hasNativeState(self.0.as_ref().unwrap(), rt.get_inner_mut())
     }
 
     pub fn get_native_state<T: 'static + Send + Sync>(
@@ -96,11 +96,9 @@ impl<'rt> JsiObject<'rt> {
             return None;
         }
 
-        let state_ptr = unsafe {
-            sys::Object_getNativeState(self.0.as_ref().unwrap(), rt.get_inner_mut())
-        };
+        let state_ptr = sys::Object_getNativeState(self.0.as_ref().unwrap(), rt.get_inner_mut());
 
-        let rust_state_ptr = unsafe { sys::extract_rust_native_state(&state_ptr) };
+        let rust_state_ptr = sys::extract_rust_native_state(&state_ptr);
 
         if rust_state_ptr.is_null() {
             return None;
@@ -118,9 +116,7 @@ impl<'rt> JsiObject<'rt> {
     ) {
         let boxed = sys::RustNativeState::from_value(value);
         let wrapper = sys::create_native_state_wrapper(boxed);
-        unsafe {
-            sys::Object_setNativeState(self.0.pin_mut(), rt.get_inner_mut(), wrapper);
-        }
+        sys::Object_setNativeState(self.0.pin_mut(), rt.get_inner_mut(), wrapper);
     }
 
     #[inline(always)]
