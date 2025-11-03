@@ -64,7 +64,7 @@ fn main() {
         .exported_header_dirs
         .extend(includes.iter().map(|e| e.as_path()));
 
-    let mut bridges = vec!["src/ffi/base.rs", "src/ffi/host.rs"];
+    let mut bridges = vec!["src/ffi/base.rs", "src/ffi/host.rs", "src/ffi/native_state.rs"];
 
     if let Some("android") = target_os {
         bridges.push("src/ffi/android.rs");
@@ -74,12 +74,21 @@ fn main() {
         println!("cargo:rerun-if-changed={}", bridge);
     }
 
+    // Add native_state.cpp implementation
+    let mut more_cpp = vec![pkg_base.join("src/native_state.cpp")];
+
+    let mut all_cpp = compiles.clone();
+    for f in more_cpp.drain(..) {
+        all_cpp.push(dunce::canonicalize(&f).expect(&format!("missing compile file {:?}", f)));
+    }
+
     cxx_build::bridges(bridges)
         .flag_if_supported("-std=c++17")
-        .files(compiles)
+        .files(all_cpp)
         .compile("jsi");
 
     println!("cargo:rerun-if-changed=include/wrapper.h");
     println!("cargo:rerun-if-changed=include/host.h");
+    println!("cargo:rerun-if-changed=include/native_state.h");
     println!("cargo:rerun-if-env-changed=JSI_RS_RN_ROOT");
 }

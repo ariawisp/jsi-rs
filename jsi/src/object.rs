@@ -1,4 +1,5 @@
 use std::marker::PhantomData;
+use std::sync::Arc;
 
 use crate::array::JsiArray;
 use crate::array_buffer::JsiArrayBuffer;
@@ -81,6 +82,45 @@ impl<'rt> JsiObject<'rt> {
     /// facebook::jsi::Object. Ownership is transferred to the caller.
     pub fn into_raw(self) -> *mut sys::JsiObject {
         self.0.into_raw()
+    }
+
+    pub fn has_native_state(&self, rt: &mut RuntimeHandle<'rt>) -> bool {
+        unsafe { sys::Object_hasNativeState(self.0.as_ref().unwrap(), rt.get_inner_mut()) }
+    }
+
+    pub fn get_native_state<T: 'static + Send + Sync>(
+        &self,
+        rt: &mut RuntimeHandle<'rt>,
+    ) -> Option<Arc<T>> {
+        if !self.has_native_state(rt) {
+            return None;
+        }
+
+        let state_ptr = unsafe {
+            sys::Object_getNativeState(self.0.as_ref().unwrap(), rt.get_inner_mut())
+        };
+
+        let rust_state_ptr = unsafe { sys::extract_rust_native_state(&state_ptr) };
+
+        if rust_state_ptr.is_null() {
+            return None;
+        }
+
+        // Safety: pointer is owned by the NativeStateWrapper attached to this object
+        let rust_state: &sys::RustNativeState = unsafe { &*rust_state_ptr };
+        rust_state.downcast_arc::<T>()
+    }
+
+    pub fn set_native_state<T: 'static + Send + Sync>(
+        &mut self,
+        rt: &mut RuntimeHandle<'rt>,
+        value: T,
+    ) {
+        let boxed = sys::RustNativeState::from_value(value);
+        let wrapper = sys::create_native_state_wrapper(boxed);
+        unsafe {
+            sys::Object_setNativeState(self.0.pin_mut(), rt.get_inner_mut(), wrapper);
+        }
     }
 }
 
