@@ -31,4 +31,8 @@ macro_rules! prop {
     ($name:literal, $rt:expr) => {
         $crate::cached_prop_name::get_cached_prop_name($name, $rt)
     };
+    // Fallback for dynamic names: not cached, but convenient and readable.
+    ($name:expr, $rt:expr) => {
+        $crate::PropName::new($name, $rt)
+    };
 }
