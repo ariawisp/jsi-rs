@@ -9,7 +9,7 @@ publish = false
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-jsi = { path = "../../jsi" }
+jsi = { path = "../../jsi", features = ["builtin-jsi", "hybrid_objects", "typed_arrays", "weak_object"] }
 anyhow = { version = "1.0", features = ["backtrace"] }
 jni = "0.21.1"
 cxx = "1.0.106"

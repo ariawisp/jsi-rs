@@ -1,6 +1,9 @@
 use jsi::{
-    host_object, FromObject, FromValue, IntoValue, JsiFn, JsiObject, JsiString, JsiValue, PropName, RuntimeHandle
+    host_object, hybrid_method, hybrid_object,
+    FromObject, FromValue, IntoValue, JsiFn, JsiObject, JsiString, JsiValue, PropName, RuntimeHandle,
+    HybridObjectExt, AsValue,
 };
+use std::sync::{Arc, atomic::{AtomicI32, Ordering}};
 
 #[cfg(target_os = "android")]
 mod android;
@@ -46,6 +49,11 @@ pub fn init(rt: *mut jsi::sys::Runtime, call_invoker: cxx::SharedPtr<jsi::sys::C
 
     let global_num = JsiValue::new_number(3.200);
     rt.global().set(PropName::new("ExampleGlobal3", &mut rt), &global_num, &mut rt);
+
+    // HybridObject example: Counter (construction example shown below)
+    // let counter = Arc::new(Counter { value: AtomicI32::new(0) });
+    // let counter_obj = counter.to_js_object(&mut rt);
+    // rt.global().set(PropName::new("Counter", &mut rt), &counter_obj.into_value(&mut rt), &mut rt);
 }
 
 struct ExampleHostObject;
@@ -54,5 +62,21 @@ struct ExampleHostObject;
 impl ExampleHostObject {
     pub fn time(&self, _rt: &mut RuntimeHandle) -> anyhow::Result<i64> {
         Ok(3200)
+    }
+}
+
+#[derive(Debug)]
+struct Counter { value: AtomicI32 }
+
+#[hybrid_object("Counter")]
+impl Counter {
+    #[hybrid_method]
+    fn increment(&self, _rt: &mut RuntimeHandle) -> i32 {
+        self.value.fetch_add(1, Ordering::SeqCst) + 1
+    }
+
+    #[hybrid_method]
+    fn get_value(&self, _rt: &mut RuntimeHandle) -> i32 {
+        self.value.load(Ordering::SeqCst)
     }
 }

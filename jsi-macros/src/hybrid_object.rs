@@ -66,7 +66,7 @@ pub fn expand_hybrid_object(name_lit: LitStr, input: ItemImpl) -> TokenStream {
                             #(#arg_convert)*
 
                             let result = #self_ty::#method_ident(&*state, rt, #(#arg_idents),*);
-                            Ok(::jsi::IntoValue::into_value(result, rt).0)
+                            Ok(::jsi::IntoValue::into_value(result, rt))
                         }),
                         rt,
                     );
@@ -84,7 +84,7 @@ pub fn expand_hybrid_object(name_lit: LitStr, input: ItemImpl) -> TokenStream {
         impl ::jsi::HybridObject for #self_ty {
             fn hybrid_object_name(&self) -> &'static str { #name }
 
-            fn load_methods(&self, obj: &mut ::jsi::JsiObject, rt: &mut ::jsi::RuntimeHandle) {
+            fn load_methods<'rt>(&self, obj: &mut ::jsi::JsiObject<'rt>, rt: &mut ::jsi::RuntimeHandle<'rt>) {
                 #(#method_regs)*
             }
         }

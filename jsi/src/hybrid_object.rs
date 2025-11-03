@@ -5,7 +5,7 @@ use crate::{sys, JsiObject, RuntimeHandle};
 pub trait HybridObject: Send + Sync + 'static {
     fn hybrid_object_name(&self) -> &'static str;
 
-    fn load_methods(&self, obj: &mut JsiObject, rt: &mut RuntimeHandle);
+    fn load_methods<'rt>(&self, obj: &mut JsiObject<'rt>, rt: &mut RuntimeHandle<'rt>);
 }
 
 pub trait HybridObjectExt: HybridObject + Sized {
