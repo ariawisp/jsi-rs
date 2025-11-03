@@ -24,6 +24,10 @@ mod runtime;
 mod string;
 mod symbol;
 mod value;
+#[cfg(feature = "weak_object")]
+mod weak_object;
+#[cfg(feature = "typed_arrays")]
+mod typed_array;
 
 pub use array::*;
 pub use array_buffer::*;
@@ -43,6 +47,10 @@ pub use runtime::*;
 pub use string::*;
 pub use symbol::*;
 pub use value::*;
+#[cfg(feature = "weak_object")]
+pub use weak_object::*;
+#[cfg(feature = "typed_arrays")]
+pub use typed_array::*;
 
 /// Creates a JavaScript `Error` object with the given string as the message.
 #[macro_export]
