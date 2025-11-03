@@ -75,13 +75,20 @@ impl RustNativeState {
     }
 
     pub fn downcast_arc<T: 'static + Send + Sync>(&self) -> Option<Arc<T>> {
-        // Clone Arc and attempt downcast; returns new Arc<T> on success
+        // Try to downcast the erased Arc directly to Arc<T>
         let arc_any = self.inner.clone();
-        // Arc::downcast is available on Arc<dyn Any + Send + Sync>
-        match Arc::downcast::<T>(arc_any) {
-            Ok(v) => Some(v),
-            Err(_) => None,
+        if let Ok(v) = Arc::downcast::<T>(arc_any) {
+            return Some(v);
         }
+
+        // Fallback: the erased Arc may itself contain an Arc<T> (e.g. state set from an Arc)
+        let arc_any = self.inner.clone();
+        if let Ok(v) = Arc::downcast::<Arc<T>>(arc_any) {
+            // Clone the inner Arc<T> to return ownership
+            return Some(Arc::as_ref(&v).clone());
+        }
+
+        None
     }
 }
 

@@ -1,7 +1,7 @@
 use std::{future::Future, pin::Pin};
 
 #[cfg(feature = "macros")]
-pub use jsi_macros::host_object;
+pub use jsi_macros::{host_object, hybrid_method, hybrid_object};
 pub use jsi_sys as sys;
 
 // allows us to use the proc macros inside this crate
@@ -18,6 +18,7 @@ mod ext;
 mod function;
 mod host_function;
 mod host_object;
+mod hybrid_object;
 mod noop;
 mod object;
 mod prop_name;
@@ -42,6 +43,7 @@ pub use ext::*;
 pub use function::*;
 pub use host_function::*;
 pub use host_object::*;
+pub use hybrid_object::*;
 pub use noop::*;
 pub use object::*;
 pub use prop_name::*;

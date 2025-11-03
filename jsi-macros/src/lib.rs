@@ -3,6 +3,7 @@ use syn::parse_macro_input;
 
 mod host_event;
 mod host_object;
+mod hybrid_object;
 
 
 /// A macro that makes it easy to define functions and properies on host
@@ -59,4 +60,25 @@ pub fn host_object(
 pub fn host_event_emitter(target: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let impl_block = parse_macro_input!(target as host_event::HostEventImpl);
     proc_macro::TokenStream::from(impl_block.0)
+}
+
+#[proc_macro_attribute]
+pub fn hybrid_object(
+    attr: proc_macro::TokenStream,
+    item: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    let name_lit = parse_macro_input!(attr as syn::LitStr);
+    let item_impl = parse_macro_input!(item as syn::ItemImpl);
+    let ts = hybrid_object::expand_hybrid_object(name_lit, item_impl);
+    proc_macro::TokenStream::from(ts)
+}
+
+/// Marker attribute for methods inside a `#[hybrid_object]` impl block.
+#[proc_macro_attribute]
+pub fn hybrid_method(
+    _attr: proc_macro::TokenStream,
+    item: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    // passthrough: `#[hybrid_object]` scans for this attribute
+    item
 }
