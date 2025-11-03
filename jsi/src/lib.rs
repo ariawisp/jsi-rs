@@ -27,6 +27,7 @@ mod value;
 
 pub use array::*;
 pub use array_buffer::*;
+#[allow(unused_imports)]
 pub use macros_extras::*;
 pub use call_invoker::*;
 #[cfg(feature = "serde")]
