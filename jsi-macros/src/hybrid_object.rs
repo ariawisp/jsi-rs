@@ -12,7 +12,9 @@ pub fn expand_hybrid_object(name_lit: LitStr, input: ItemImpl) -> TokenStream {
     for it in &input.items {
         if let ImplItem::Fn(m) = it {
             let has_attr = m.attrs.iter().any(|a| a.path().is_ident("hybrid_method"));
-            if !has_attr { continue; }
+            if !has_attr {
+                continue;
+            }
 
             let method_ident = m.sig.ident.clone();
             let method_name_str = method_ident.to_string();
@@ -21,8 +23,12 @@ pub fn expand_hybrid_object(name_lit: LitStr, input: ItemImpl) -> TokenStream {
             let mut arg_idents: Vec<syn::Ident> = Vec::new();
             let mut arg_types: Vec<syn::Type> = Vec::new();
             for (i, arg) in m.sig.inputs.iter().enumerate() {
-                if i == 0 { continue; } // &self
-                if i == 1 { continue; } // &mut RuntimeHandle
+                if i == 0 {
+                    continue;
+                } // &self
+                if i == 1 {
+                    continue;
+                } // &mut RuntimeHandle
                 if let syn::FnArg::Typed(pat) = arg {
                     let ident = if let syn::Pat::Ident(pi) = &*pat.pat {
                         pi.ident.clone()

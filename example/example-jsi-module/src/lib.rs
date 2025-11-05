@@ -1,9 +1,11 @@
 use jsi::{
-    host_object, hybrid_method, hybrid_object,
-    FromObject, FromValue, IntoValue, JsiFn, JsiObject, JsiString, JsiValue, PropName, RuntimeHandle,
-    HybridObjectExt, AsValue,
+    host_object, hybrid_method, hybrid_object, AsValue, FromObject, FromValue, HybridObjectExt,
+    IntoValue, JsiFn, JsiObject, JsiString, JsiValue, PropName, RuntimeHandle,
 };
-use std::sync::{Arc, atomic::{AtomicI32, Ordering}};
+use std::sync::{
+    atomic::{AtomicI32, Ordering},
+    Arc,
+};
 
 #[cfg(target_os = "android")]
 mod android;
@@ -41,14 +43,26 @@ pub fn init(rt: *mut jsi::sys::Runtime, call_invoker: cxx::SharedPtr<jsi::sys::C
     let host_object = ExampleHostObject;
     let host_object = host_object.into_value(&mut rt);
 
-    rt.global().set(PropName::new("ExampleGlobal", &mut rt), &host_object, &mut rt);
+    rt.global().set(
+        PropName::new("ExampleGlobal", &mut rt),
+        &host_object,
+        &mut rt,
+    );
 
     let global_str = JsiString::new("hallo", &mut rt);
     let global_str = global_str.into_value(&mut rt);
-    rt.global().set(PropName::new("ExampleGlobal2", &mut rt), &global_str, &mut rt);
+    rt.global().set(
+        PropName::new("ExampleGlobal2", &mut rt),
+        &global_str,
+        &mut rt,
+    );
 
     let global_num = JsiValue::new_number(3.200);
-    rt.global().set(PropName::new("ExampleGlobal3", &mut rt), &global_num, &mut rt);
+    rt.global().set(
+        PropName::new("ExampleGlobal3", &mut rt),
+        &global_num,
+        &mut rt,
+    );
 
     // HybridObject example: Counter (construction example shown below)
     // let counter = Arc::new(Counter { value: AtomicI32::new(0) });
@@ -66,7 +80,9 @@ impl ExampleHostObject {
 }
 
 #[derive(Debug)]
-struct Counter { value: AtomicI32 }
+struct Counter {
+    value: AtomicI32,
+}
 
 #[hybrid_object("Counter")]
 impl Counter {

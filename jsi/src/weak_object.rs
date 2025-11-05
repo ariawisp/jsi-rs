@@ -27,4 +27,3 @@ impl<'rt> JsiWeakObject<'rt> {
 }
 
 unsafe impl<'rt> Send for JsiWeakObject<'rt> {}
-

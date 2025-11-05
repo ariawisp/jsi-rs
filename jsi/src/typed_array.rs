@@ -83,4 +83,3 @@ impl<'rt, T: TypedArrayElement> JsiTypedArray<'rt, T> {
         unsafe { std::slice::from_raw_parts_mut(data_ptr, length) }
     }
 }
-

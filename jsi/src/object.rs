@@ -125,11 +125,8 @@ impl<'rt> JsiObject<'rt> {
         index: usize,
         rt: &mut RuntimeHandle<'rt>,
     ) -> JsiValue<'rt> {
-        let value_ptr = sys::Object_getPropertyByIndex(
-            self.0.as_ref().unwrap(),
-            rt.get_inner_mut(),
-            index,
-        );
+        let value_ptr =
+            sys::Object_getPropertyByIndex(self.0.as_ref().unwrap(), rt.get_inner_mut(), index);
         JsiValue(value_ptr, PhantomData)
     }
 

@@ -50,4 +50,3 @@ macro_rules! jsi_promise {
         ::jsi::create_promise(|$resolve, $reject, $hrt| $body, $rt)
     }};
 }
-

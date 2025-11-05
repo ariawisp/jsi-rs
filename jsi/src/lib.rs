@@ -10,7 +10,6 @@ extern crate self as jsi;
 mod array;
 mod array_buffer;
 mod array_buffer_ext;
-mod macros_extras;
 mod call_invoker;
 #[cfg(feature = "serde")]
 mod convert;
@@ -19,21 +18,20 @@ mod function;
 mod host_function;
 mod host_object;
 mod hybrid_object;
+mod macros_extras;
 mod noop;
 mod object;
 mod prop_name;
 mod runtime;
 mod string;
 mod symbol;
+mod typed_array;
 mod value;
 mod weak_object;
-mod typed_array;
 
 pub use array::*;
 pub use array_buffer::*;
 pub use array_buffer_ext::*;
-#[allow(unused_imports)]
-pub use macros_extras::*;
 pub use call_invoker::*;
 #[cfg(feature = "serde")]
 pub use convert::*;
@@ -42,6 +40,8 @@ pub use function::*;
 pub use host_function::*;
 pub use host_object::*;
 pub use hybrid_object::*;
+#[allow(unused_imports)]
+pub use macros_extras::*;
 pub use noop::*;
 pub use object::*;
 pub use prop_name::*;
@@ -49,9 +49,9 @@ pub mod cached_prop_name;
 pub use runtime::*;
 pub use string::*;
 pub use symbol::*;
+pub use typed_array::*;
 pub use value::*;
 pub use weak_object::*;
-pub use typed_array::*;
 
 /// Creates a JavaScript `Error` object with the given string as the message.
 #[macro_export]

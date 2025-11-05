@@ -65,5 +65,8 @@ fn main() {
     println!("cargo:rustc-link-search={}", hermes_dir.to_string_lossy());
     // Embed rpath so the test binary can find the dylib at runtime on macOS.
     #[cfg(target_os = "macos")]
-    println!("cargo:rustc-link-arg=-Wl,-rpath,{}", hermes_dir.to_string_lossy());
+    println!(
+        "cargo:rustc-link-arg=-Wl,-rpath,{}",
+        hermes_dir.to_string_lossy()
+    );
 }

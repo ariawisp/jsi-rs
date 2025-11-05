@@ -31,9 +31,7 @@ fn main() {
     }
 
     if let Some("android") = target_os {
-        includes.push(
-            rn_base.join("ReactAndroid/src/main/jni/react/turbomodule/"),
-        );
+        includes.push(rn_base.join("ReactAndroid/src/main/jni/react/turbomodule/"));
         includes.push(pkg_base.join("vendor/fbjni/cxx"));
     }
 
@@ -52,7 +50,9 @@ fn main() {
 
     if let Some("android") = target_os {
         compiles.push(
-            rn_base.join("ReactAndroid/src/main/jni/react/turbomodule/ReactCommon/CallInvokerHolder.cpp")
+            rn_base.join(
+                "ReactAndroid/src/main/jni/react/turbomodule/ReactCommon/CallInvokerHolder.cpp",
+            ),
         );
     }
 
@@ -64,7 +64,11 @@ fn main() {
         .exported_header_dirs
         .extend(includes.iter().map(|e| e.as_path()));
 
-    let mut bridges = vec!["src/ffi/base.rs", "src/ffi/host.rs", "src/ffi/native_state.rs"];
+    let mut bridges = vec![
+        "src/ffi/base.rs",
+        "src/ffi/host.rs",
+        "src/ffi/native_state.rs",
+    ];
 
     if let Some("android") = target_os {
         bridges.push("src/ffi/android.rs");

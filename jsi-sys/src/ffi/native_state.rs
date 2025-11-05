@@ -20,10 +20,7 @@ pub(crate) mod ffi {
         fn extract_rust_native_state(state: &SharedPtr<NativeState>) -> *mut RustNativeState;
 
         fn Object_hasNativeState(obj: &JsiObject, rt: Pin<&mut Runtime>) -> bool;
-        fn Object_getNativeState(
-            obj: &JsiObject,
-            rt: Pin<&mut Runtime>,
-        ) -> SharedPtr<NativeState>;
+        fn Object_getNativeState(obj: &JsiObject, rt: Pin<&mut Runtime>) -> SharedPtr<NativeState>;
         fn Object_setNativeState(
             obj: Pin<&mut JsiObject>,
             rt: Pin<&mut Runtime>,

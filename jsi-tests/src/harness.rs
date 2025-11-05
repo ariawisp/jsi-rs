@@ -1,5 +1,5 @@
 use cxx::UniquePtr;
-use jsi::{RuntimeHandle};
+use jsi::RuntimeHandle;
 
 use crate::ffi::bridge::*;
 
