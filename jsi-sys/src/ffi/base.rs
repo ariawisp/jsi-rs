@@ -346,6 +346,18 @@ pub mod ffi {
         pub fn Value_toString(_self: &JsiValue, rt: Pin<&mut Runtime>) -> UniquePtr<JsiString>;
         #[namespace = "jsi_rs::ffi"]
         pub fn Value_copy(_self: &JsiValue, rt: Pin<&mut Runtime>) -> UniquePtr<JsiValue>;
+        #[namespace = "jsi_rs::ffi"]
+        /// Copy a value from a raw pointer array at a specific index.
+        /// This is needed because CXX opaque types cannot be directly indexed from Rust.
+        ///
+        /// # Safety
+        /// - `arr` must point to a valid array of at least `index + 1` Value objects
+        /// - `index` must be less than the array length
+        pub unsafe fn Value_copyFromArray(
+            arr: *const JsiValue,
+            index: usize,
+            rt: Pin<&mut Runtime>,
+        ) -> UniquePtr<JsiValue>;
     }
 
     impl UniquePtr<Runtime> {}

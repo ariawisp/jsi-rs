@@ -521,6 +521,14 @@ std::unique_ptr<Value> Value_copy(const Value &self, Runtime &rt)
   return std::make_unique<Value>(std::move(val));
 }
 
+// Copy a value from a raw pointer array at a specific index
+// This is needed because CXX opaque types cannot be directly indexed
+std::unique_ptr<Value> Value_copyFromArray(const Value *arr, size_t index, Runtime &rt)
+{
+  auto val = Value(rt, arr[index]);
+  return std::make_unique<Value>(std::move(val));
+}
+
 // CallInvoker
 
 // External ArrayBuffer backed by host memory
