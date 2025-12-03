@@ -53,7 +53,8 @@ impl<'rt> RuntimeHandle<'rt> {
     /// # Safety
     /// Caller must ensure the provided runtime pointer remains valid for `'rt`.
     pub unsafe fn from_raw_pin(rt: Pin<&'rt mut sys::Runtime>) -> Self {
-        RuntimeHandle::new_unchecked(rt.get_unchecked_mut() as *mut sys::Runtime)
+        // SAFETY: Caller guarantees rt is valid for 'rt
+        RuntimeHandle::new_unchecked(unsafe { rt.get_unchecked_mut() } as *mut sys::Runtime)
     }
 
     /// Copies a borrowed `facebook::jsi::Object` into a [`JsiValue`].
@@ -74,7 +75,8 @@ impl<'rt> RuntimeHandle<'rt> {
     /// The provided array reference must originate from the same runtime and remain
     /// valid for the duration of this call.
     pub unsafe fn value_from_array_ref(&mut self, array: &sys::JsiArray) -> JsiValue<'rt> {
-        self.value_from_object_ref(cast_array_to_object(array))
+        // SAFETY: Caller guarantees array is valid
+        unsafe { self.value_from_object_ref(cast_array_to_object(array)) }
     }
 
     /// Copies a borrowed `facebook::jsi::Function` into a [`JsiValue`].
@@ -83,7 +85,8 @@ impl<'rt> RuntimeHandle<'rt> {
     /// The provided function reference must originate from the same runtime and remain
     /// valid for the duration of this call.
     pub unsafe fn value_from_function_ref(&mut self, function: &sys::JsiFunction) -> JsiValue<'rt> {
-        self.value_from_object_ref(cast_function_to_object(function))
+        // SAFETY: Caller guarantees function is valid
+        unsafe { self.value_from_object_ref(cast_function_to_object(function)) }
     }
 }
 
@@ -123,9 +126,11 @@ impl<'a, T: RuntimeDisplay> std::fmt::Display for RuntimeDisplayWrapper<'a, T> {
 }
 
 unsafe fn cast_array_to_object(array: &sys::JsiArray) -> &sys::JsiObject {
-    &*(array as *const sys::JsiArray as *const sys::JsiObject)
+    // SAFETY: JsiArray and JsiObject have the same layout in C++
+    unsafe { &*(array as *const sys::JsiArray as *const sys::JsiObject) }
 }
 
 unsafe fn cast_function_to_object(function: &sys::JsiFunction) -> &sys::JsiObject {
-    &*(function as *const sys::JsiFunction as *const sys::JsiObject)
+    // SAFETY: JsiFunction and JsiObject have the same layout in C++
+    unsafe { &*(function as *const sys::JsiFunction as *const sys::JsiObject) }
 }

@@ -424,7 +424,8 @@ unsafe fn host_fn_trampoline(
     closure: *mut c_void,
 ) -> anyhow::Result<cxx::UniquePtr<JsiValue>> {
     let closure = closure as *mut HostFunctionCallback;
-    let mut closure = Box::from_raw(closure);
+    // SAFETY: closure was created via Box::into_raw in create_function_from_host_function
+    let mut closure = unsafe { Box::from_raw(closure) };
 
     // Rust JsiValue type is just a marker type; its size according to Rust is
     // zero so we cannot construct a slice of JsiValue; instead the size of each
@@ -434,7 +435,8 @@ unsafe fn host_fn_trampoline(
 
     for i in 0..count {
         let ptr = (args as usize + stride * i as usize) as *const JsiValue;
-        args_refs.push(&*ptr);
+        // SAFETY: C++ guarantees args points to valid array of count elements
+        args_refs.push(unsafe { &*ptr });
     }
 
     let res = closure(rt, this, &args_refs[..]);
@@ -445,13 +447,15 @@ unsafe fn host_fn_trampoline(
 pub type CallInvokerCallback<'rt> = Box<dyn FnOnce() -> anyhow::Result<()> + 'rt>;
 
 unsafe fn call_invoker_trampoline(closure: *mut c_void) -> anyhow::Result<()> {
-    let closure = Box::from_raw(closure as *mut CallInvokerCallback);
+    // SAFETY: closure was created via Box::into_raw
+    let closure = unsafe { Box::from_raw(closure as *mut CallInvokerCallback) };
     closure()
 }
 
 pub type ExternalBufferDeleter<'rt> = Box<dyn FnOnce() + 'rt>;
 
 unsafe fn array_buffer_external_deleter_trampoline(closure: *mut c_void) {
-    let closure = Box::from_raw(closure as *mut ExternalBufferDeleter);
+    // SAFETY: closure was created via Box::into_raw
+    let closure = unsafe { Box::from_raw(closure as *mut ExternalBufferDeleter) };
     closure()
 }
