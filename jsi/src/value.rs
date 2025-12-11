@@ -12,6 +12,123 @@ use crate::{
     RuntimeDisplay, RuntimeEq, RuntimeHandle, SharedJsiHostObject, SharedJsiUserHostObject,
 };
 
+/// Borrowed view of a `facebook::jsi::Value` that does not take ownership.
+#[derive(Copy, Clone)]
+pub struct JsiValueRef<'rt> {
+    ptr: *const sys::JsiValue,
+    pub(crate) _marker: PhantomData<&'rt sys::JsiValue>,
+}
+
+impl<'rt> JsiValueRef<'rt> {
+    /// # Safety
+    /// Caller must ensure `ptr` is valid for the duration of the borrow.
+    pub unsafe fn from_raw(ptr: *const sys::JsiValue) -> Self {
+        Self { ptr, _marker: PhantomData }
+    }
+
+    pub(crate) fn as_raw(&self) -> &sys::JsiValue {
+        // SAFETY: caller guaranteed pointer validity.
+        unsafe { &*self.ptr }
+    }
+
+    pub fn is_null(&self) -> bool {
+        self.as_raw().is_null()
+    }
+
+    pub fn is_undefined(&self) -> bool {
+        self.as_raw().is_undefined()
+    }
+
+    pub fn is_number(&self) -> bool {
+        self.as_raw().is_number()
+    }
+
+    pub fn is_bool(&self) -> bool {
+        self.as_raw().is_bool()
+    }
+
+    pub fn is_string(&self) -> bool {
+        self.as_raw().is_string()
+    }
+
+    pub fn is_symbol(&self) -> bool {
+        self.as_raw().is_symbol()
+    }
+
+    pub fn is_object(&self) -> bool {
+        self.as_raw().is_object()
+    }
+
+    pub fn as_number(&self, _rt: &mut RuntimeHandle<'rt>) -> Option<f64> {
+        self.as_raw().get_number().ok()
+    }
+
+    pub fn as_bool(&self, _rt: &mut RuntimeHandle<'rt>) -> Option<bool> {
+        self.as_raw().get_bool().ok()
+    }
+
+    pub fn as_string(&self, rt: &mut RuntimeHandle<'rt>) -> Option<JsiString<'rt>> {
+        sys::Value_asString(self.as_raw(), rt.get_inner_mut())
+            .ok()
+            .map(|raw| JsiString(raw, PhantomData))
+    }
+
+    pub fn as_object(&self, rt: &mut RuntimeHandle<'rt>) -> Option<JsiObject<'rt>> {
+        sys::Value_asObject(self.as_raw(), rt.get_inner_mut())
+            .ok()
+            .map(|raw| JsiObject(raw, PhantomData))
+    }
+
+    pub fn as_array(&self, rt: &mut RuntimeHandle<'rt>) -> Option<JsiArray<'rt>> {
+        self.try_into_js::<JsiArray<'rt>>(rt)
+    }
+
+    pub fn clone_value(&self, rt: &mut RuntimeHandle<'rt>) -> JsiValue<'rt> {
+        JsiValue(sys::Value_copy(self.as_raw(), rt.get_inner_mut()), PhantomData)
+    }
+
+    pub fn clone(&self, rt: &mut RuntimeHandle<'rt>) -> JsiValue<'rt> {
+        self.clone_value(rt)
+    }
+
+    pub fn try_into_js<T: FromValue<'rt>>(&self, rt: &mut RuntimeHandle<'rt>) -> Option<T> {
+        self.clone_value(rt).try_into_js(rt)
+    }
+}
+
+/// Borrowed slice of `facebook::jsi::Value` pointers.
+#[derive(Copy, Clone)]
+pub struct JsiValueSlice<'rt> {
+    base: *const sys::JsiValue,
+    len: usize,
+    _marker: PhantomData<&'rt sys::JsiValue>,
+}
+
+impl<'rt> JsiValueSlice<'rt> {
+    /// # Safety
+    /// Caller must ensure the pointer is valid for `len` elements.
+    pub unsafe fn from_raw_parts(ptr: *const sys::JsiValue, len: usize) -> Self {
+        Self { base: ptr, len, _marker: PhantomData }
+    }
+
+    pub fn len(&self) -> usize {
+        self.len
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+
+    pub fn get(&self, idx: usize) -> Option<JsiValueRef<'rt>> {
+        if idx >= self.len || (self.base.is_null() && self.len != 0) {
+            return None;
+        }
+        // SAFETY: caller guarantees array validity and bounds.
+        let ptr = unsafe { sys::Value_ptrAt(self.base, idx) };
+        Some(unsafe { JsiValueRef::from_raw(ptr) })
+    }
+}
+
 pub struct JsiValue<'rt>(
     pub(crate) cxx::UniquePtr<sys::JsiValue>,
     pub(crate) PhantomData<&'rt ()>,

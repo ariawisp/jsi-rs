@@ -358,6 +358,14 @@ pub mod ffi {
             index: usize,
             rt: Pin<&mut Runtime>,
         ) -> UniquePtr<JsiValue>;
+
+        #[namespace = "jsi_rs::ffi"]
+        /// Borrow a pointer to a Value from a raw array without copying.
+        ///
+        /// # Safety
+        /// - `arr` must point to a valid array of at least `index + 1` Value objects
+        /// - `index` must be less than the array length
+        pub unsafe fn Value_ptrAt(arr: *const JsiValue, index: usize) -> *const JsiValue;
     }
 
     impl UniquePtr<Runtime> {}

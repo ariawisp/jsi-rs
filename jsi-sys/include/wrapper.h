@@ -529,6 +529,13 @@ std::unique_ptr<Value> Value_copyFromArray(const Value *arr, size_t index, Runti
   return std::make_unique<Value>(std::move(val));
 }
 
+// Borrow a value pointer from a raw pointer array at a specific index.
+// This performs pointer arithmetic in C++, where the Value layout is known.
+inline const Value *Value_ptrAt(const Value *arr, size_t index)
+{
+  return &arr[index];
+}
+
 // CallInvoker
 
 // External ArrayBuffer backed by host memory
