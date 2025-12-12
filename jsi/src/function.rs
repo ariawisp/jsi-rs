@@ -1,6 +1,6 @@
 use crate::host_function::UserHostFunction;
-use crate::{sys, IntoValue, JsiObject, JsiValue, PropName, RuntimeHandle};
-use anyhow::{bail, Context};
+use crate::{IntoValue, JsiObject, JsiValue, PropName, RuntimeHandle, sys};
+use anyhow::{Context, bail};
 use std::marker::PhantomData;
 use std::pin::Pin;
 

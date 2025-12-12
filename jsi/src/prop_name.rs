@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use crate::string::JsiString;
-use crate::{sys, RuntimeClone, RuntimeDisplay, RuntimeEq, RuntimeHandle};
+use crate::{RuntimeClone, RuntimeDisplay, RuntimeEq, RuntimeHandle, sys};
 
 /// A `PropName`, which is used to retrieve properties from `Object`s.
 pub struct PropName<'rt>(

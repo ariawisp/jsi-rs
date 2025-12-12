@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::{array_buffer::JsiArrayBuffer, sys, RuntimeHandle};
+use crate::{RuntimeHandle, array_buffer::JsiArrayBuffer, sys};
 
 pub trait ArrayBufferExt {
     fn from_vec<'a>(vec: Vec<u8>, rt: &'a mut RuntimeHandle<'a>) -> JsiArrayBuffer<'a>;

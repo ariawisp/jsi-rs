@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::marker::PhantomData;
 
-use crate::{sys, PropName, RuntimeHandle};
+use crate::{PropName, RuntimeHandle, sys};
 
 thread_local! {
     static PROP_NAME_CACHE: RefCell<HashMap<&'static str, cxx::UniquePtr<sys::PropNameID>>> =

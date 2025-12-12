@@ -1,10 +1,10 @@
 use jsi::{
-    host_object, hybrid_method, hybrid_object, AsValue, FromObject, FromValue, HybridObjectExt,
-    IntoValue, JsiFn, JsiObject, JsiString, JsiValue, PropName, RuntimeHandle,
+    AsValue, FromObject, FromValue, HybridObjectExt, IntoValue, JsiFn, JsiObject, JsiString,
+    JsiValue, PropName, RuntimeHandle, host_object, hybrid_method, hybrid_object,
 };
 use std::sync::{
-    atomic::{AtomicI32, Ordering},
     Arc,
+    atomic::{AtomicI32, Ordering},
 };
 
 #[cfg(target_os = "android")]

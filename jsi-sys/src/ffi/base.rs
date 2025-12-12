@@ -89,7 +89,7 @@ pub mod ffi {
         ) -> UniquePtr<PropNameID>;
         #[namespace = "jsi_rs::ffi"]
         pub fn PropNameID_toUtf8(_self: &PropNameID, rt: Pin<&mut Runtime>)
-            -> UniquePtr<CxxString>;
+        -> UniquePtr<CxxString>;
         #[namespace = "jsi_rs::ffi"]
         pub fn PropNameID_compare(
             rt: Pin<&mut Runtime>,

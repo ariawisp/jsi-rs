@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::{sys, JsiObject, RuntimeHandle};
+use crate::{JsiObject, RuntimeHandle, sys};
 
 pub trait HybridObject: Send + Sync + 'static {
     fn hybrid_object_name(&self) -> &'static str;

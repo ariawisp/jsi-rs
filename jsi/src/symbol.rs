@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::{sys, JsiFn, JsiValue, PropName, RuntimeDisplay, RuntimeEq, RuntimeHandle};
+use crate::{JsiFn, JsiValue, PropName, RuntimeDisplay, RuntimeEq, RuntimeHandle, sys};
 
 /// A JavaScript `Symbol`
 pub struct JsiSymbol<'rt>(

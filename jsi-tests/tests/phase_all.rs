@@ -1,4 +1,4 @@
-use jsi::{prop, FromValue, IntoValue, JsiTypedArray};
+use jsi::{FromValue, IntoValue, JsiTypedArray, prop};
 use jsi_tests::harness::Harness;
 
 #[test]

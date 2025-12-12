@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::{sys, JsiValue, RuntimeHandle};
+use crate::{JsiValue, RuntimeHandle, sys};
 
 /// A JavaScript
 /// [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array).

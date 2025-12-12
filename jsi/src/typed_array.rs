@@ -1,8 +1,8 @@
 use std::marker::PhantomData;
 
 use crate::{
-    array_buffer::JsiArrayBuffer, function::JsiFn, object::JsiObject, value::JsiValue, PropName,
-    RuntimeHandle,
+    PropName, RuntimeHandle, array_buffer::JsiArrayBuffer, function::JsiFn, object::JsiObject,
+    value::JsiValue,
 };
 
 pub trait TypedArrayElement: Sized + Copy {

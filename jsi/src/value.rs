@@ -8,8 +8,8 @@ use crate::object::JsiObject;
 use crate::string::JsiString;
 use crate::symbol::JsiSymbol;
 use crate::{
-    sys, FromObject, IntoObject, OwnedJsiHostObject, OwnedJsiUserHostObject, RuntimeClone,
-    RuntimeDisplay, RuntimeEq, RuntimeHandle, SharedJsiHostObject, SharedJsiUserHostObject,
+    FromObject, IntoObject, OwnedJsiHostObject, OwnedJsiUserHostObject, RuntimeClone,
+    RuntimeDisplay, RuntimeEq, RuntimeHandle, SharedJsiHostObject, SharedJsiUserHostObject, sys,
 };
 
 /// Borrowed view of a `facebook::jsi::Value` that does not take ownership.
@@ -23,7 +23,10 @@ impl<'rt> JsiValueRef<'rt> {
     /// # Safety
     /// Caller must ensure `ptr` is valid for the duration of the borrow.
     pub unsafe fn from_raw(ptr: *const sys::JsiValue) -> Self {
-        Self { ptr, _marker: PhantomData }
+        Self {
+            ptr,
+            _marker: PhantomData,
+        }
     }
 
     pub(crate) fn as_raw(&self) -> &sys::JsiValue {
@@ -84,7 +87,10 @@ impl<'rt> JsiValueRef<'rt> {
     }
 
     pub fn clone_value(&self, rt: &mut RuntimeHandle<'rt>) -> JsiValue<'rt> {
-        JsiValue(sys::Value_copy(self.as_raw(), rt.get_inner_mut()), PhantomData)
+        JsiValue(
+            sys::Value_copy(self.as_raw(), rt.get_inner_mut()),
+            PhantomData,
+        )
     }
 
     pub fn clone(&self, rt: &mut RuntimeHandle<'rt>) -> JsiValue<'rt> {
@@ -108,7 +114,11 @@ impl<'rt> JsiValueSlice<'rt> {
     /// # Safety
     /// Caller must ensure the pointer is valid for `len` elements.
     pub unsafe fn from_raw_parts(ptr: *const sys::JsiValue, len: usize) -> Self {
-        Self { base: ptr, len, _marker: PhantomData }
+        Self {
+            base: ptr,
+            len,
+            _marker: PhantomData,
+        }
     }
 
     pub fn len(&self) -> usize {

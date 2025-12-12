@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::{sys, JsiObject, JsiValue, RuntimeHandle};
+use crate::{JsiObject, JsiValue, RuntimeHandle, sys};
 
 /// A JavaScript `WeakObject` wrapper allowing weak references to objects.
 #[cfg_attr(docsrs, doc(cfg(feature = "weak_object")))]

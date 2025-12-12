@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::{sys, RuntimeHandle};
+use crate::{RuntimeHandle, sys};
 
 /// A JavaScript
 /// [`ArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer).

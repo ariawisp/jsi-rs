@@ -1,10 +1,10 @@
 use jsi::*;
 use serde::{
+    Serializer,
     ser::{
         SerializeMap, SerializeSeq, SerializeStruct, SerializeStructVariant, SerializeTuple,
         SerializeTupleStruct, SerializeTupleVariant,
     },
-    Serializer,
 };
 
 /// Serializes objects into JavaScript via JSI. Useful for transferring Rust

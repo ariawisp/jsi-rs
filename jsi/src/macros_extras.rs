@@ -43,10 +43,6 @@ macro_rules! jsi_set {
 /// Create a JavaScript Promise using `jsi::create_promise` (JSI-agnostic).
 #[macro_export]
 macro_rules! jsi_promise {
-    ($rt:expr, |$resolve:ident, $reject:ident| $body:block) => {{
-        ::jsi::create_promise(|$resolve, $reject, _rt| $body, $rt)
-    }};
-    ($rt:expr, |$resolve:ident, $reject:ident, $hrt:ident| $body:block) => {{
-        ::jsi::create_promise(|$resolve, $reject, $hrt| $body, $rt)
-    }};
+    ($rt:expr, |$resolve:ident, $reject:ident| $body:block) => {{ ::jsi::create_promise(|$resolve, $reject, _rt| $body, $rt) }};
+    ($rt:expr, |$resolve:ident, $reject:ident, $hrt:ident| $body:block) => {{ ::jsi::create_promise(|$resolve, $reject, $hrt| $body, $rt) }};
 }

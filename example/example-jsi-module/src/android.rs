@@ -1,7 +1,7 @@
 use anyhow::Context;
+use jni::JNIEnv;
 use jni::objects::{JClass, JObject, JString};
 use jni::sys::{jlong, jstring};
-use jni::JNIEnv;
 
 // This function signature allows this function to be called from Java
 #[no_mangle]

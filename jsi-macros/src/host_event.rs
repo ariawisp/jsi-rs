@@ -2,7 +2,7 @@ use inflector::Inflector;
 use proc_macro2::TokenStream;
 
 use quote::{format_ident, quote};
-use syn::{parse::Parse, ItemEnum};
+use syn::{ItemEnum, parse::Parse};
 
 extern crate proc_macro;
 pub struct HostEventImpl(pub TokenStream);

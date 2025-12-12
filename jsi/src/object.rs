@@ -6,8 +6,8 @@ use crate::array_buffer::JsiArrayBuffer;
 use crate::function::JsiFn;
 use crate::host_object::{OwnedJsiHostObject, SharedJsiHostObject};
 use crate::{
-    sys, FromValue, JsiValue, OwnedJsiUserHostObject, PropName, RuntimeHandle,
-    SharedJsiUserHostObject,
+    FromValue, JsiValue, OwnedJsiUserHostObject, PropName, RuntimeHandle, SharedJsiUserHostObject,
+    sys,
 };
 
 unsafe impl<'rt> Send for JsiObject<'rt> {}

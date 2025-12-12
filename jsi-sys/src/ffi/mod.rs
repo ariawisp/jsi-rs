@@ -17,6 +17,6 @@ pub use host::{
 };
 // Re-export native state helpers
 pub use native_state::{
-    create_native_state_wrapper, extract_rust_native_state, NativeState, Object_getNativeState,
-    Object_hasNativeState, Object_setNativeState, RustNativeState,
+    NativeState, Object_getNativeState, Object_hasNativeState, Object_setNativeState,
+    RustNativeState, create_native_state_wrapper, extract_rust_native_state,
 };

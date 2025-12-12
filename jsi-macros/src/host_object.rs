@@ -1,10 +1,10 @@
 use inflector::Inflector;
-use proc_macro2::{Span, TokenStream};
 use proc_macro_error::{abort, emit_error, emit_warning};
+use proc_macro2::{Span, TokenStream};
 use quote::{quote, quote_spanned};
 use syn::{
-    parse::Parse, spanned::Spanned, FnArg, GenericParam, Ident, ImplItem, ImplItemFn, ItemImpl,
-    Lifetime, LifetimeParam, Token,
+    FnArg, GenericParam, Ident, ImplItem, ImplItemFn, ItemImpl, Lifetime, LifetimeParam, Token,
+    parse::Parse, spanned::Spanned,
 };
 
 extern crate proc_macro;
@@ -174,7 +174,10 @@ impl Parse for HostObjectImpl {
                             };
 
                             if !(input_valid && output_valid) {
-                                emit_error!(it.sig.inputs, "getters should be fn(&self, rt: &mut RuntimeHandle) -> Result<T> where T: IntoValue");
+                                emit_error!(
+                                    it.sig.inputs,
+                                    "getters should be fn(&self, rt: &mut RuntimeHandle) -> Result<T> where T: IntoValue"
+                                );
                                 continue;
                             }
 
@@ -213,7 +216,10 @@ impl Parse for HostObjectImpl {
                             };
 
                             if !(input_valid && output_valid) {
-                                emit_error!(it.sig.inputs, "setters should be fn(&self, rt: &mut RuntimeHandle, value: JsiValue) -> Result<()>");
+                                emit_error!(
+                                    it.sig.inputs,
+                                    "setters should be fn(&self, rt: &mut RuntimeHandle, value: JsiValue) -> Result<()>"
+                                );
                                 continue;
                             }
 
@@ -246,7 +252,10 @@ impl Parse for HostObjectImpl {
                             };
 
                             if !(input_valid && output_valid) {
-                                emit_error!(it.sig.inputs, "methods should be fn(&self, rt: &mut RuntimeHandle, ...) -> Result<T>");
+                                emit_error!(
+                                    it.sig.inputs,
+                                    "methods should be fn(&self, rt: &mut RuntimeHandle, ...) -> Result<T>"
+                                );
                                 continue;
                             }
 

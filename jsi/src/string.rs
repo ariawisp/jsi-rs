@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::{sys, RuntimeClone, RuntimeDisplay, RuntimeEq, RuntimeHandle};
+use crate::{RuntimeClone, RuntimeDisplay, RuntimeEq, RuntimeHandle, sys};
 
 /// A JavaScript `String`
 pub struct JsiString<'rt>(

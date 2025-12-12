@@ -4,8 +4,8 @@ use jsi::{
     PropName, RuntimeClone, RuntimeHandle,
 };
 use serde::{
-    de::{IntoDeserializer, SeqAccess},
     Deserializer,
+    de::{IntoDeserializer, SeqAccess},
 };
 use thiserror::Error;
 

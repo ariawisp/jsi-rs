@@ -6,7 +6,7 @@
 use anyhow::bail;
 use std::{marker::PhantomData, pin::Pin};
 
-use crate::{sys, IntoValue, JsTaskCallback, JsiValue, PropName, RuntimeHandle};
+use crate::{IntoValue, JsTaskCallback, JsiValue, PropName, RuntimeHandle, sys};
 use sys::CallInvokerCallback;
 
 /// An owned host object

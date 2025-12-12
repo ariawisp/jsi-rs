@@ -1,4 +1,4 @@
-use crate::shim::{rho_get, rho_properties, rho_set, RustHostObject};
+use crate::shim::{RustHostObject, rho_get, rho_properties, rho_set};
 
 #[cxx::bridge]
 pub(crate) mod ffi {
